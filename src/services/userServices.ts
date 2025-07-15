@@ -1,6 +1,5 @@
-import { Prisma } from '../../generated/prisma';
-const prisma = require('../prisma/prismaClient');
-
+import prisma from '../prisma/prismaClient';
+import { Prisma } from '@prisma/client';
 // Get all users
 const getAllUsers = async () => {
     return await prisma.user.findMany();
