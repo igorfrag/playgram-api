@@ -1,13 +1,46 @@
 import prisma from '../prisma/prismaClient';
 import { Prisma } from '@prisma/client';
+import { CreateUserInput, LoginUserInput } from '../types/userServices';
+import { generateToken } from '../utils/jwt';
+import bcrypt from 'bcrypt';
+
 // Get all users
 const getAllUsers = async () => {
     return await prisma.user.findMany();
 };
 
 // Create a new user
-const createUser = async (data: Prisma.UserCreateInput) => {
-    return await prisma.user.create({ data });
+const createUser = async (data: CreateUserInput) => {
+    const { password, ...rest } = data;
+    const passwordHash = await bcrypt.hash(password, 10);
+    return await prisma.user.create({
+        data: {
+            ...rest,
+            passwordHash,
+        },
+    });
+};
+
+// Login user
+const loginUser = async (data: LoginUserInput) => {
+    const { email, password } = data;
+    const user = await prisma.user.findUnique({ where: { email } });
+    if (!user) {
+        throw new Error('User not Found');
+    }
+    const isPasswordValid = await bcrypt.compare(password, user.passwordHash);
+    if (!isPasswordValid) {
+        throw new Error('Wrong password');
+    }
+
+    const payload = {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+    };
+    const token = generateToken(payload);
+
+    return { token, user: payload };
 };
 
 // Get a user by ID
@@ -28,6 +61,7 @@ const deleteUser = async (id: number) => {
 module.exports = {
     getAllUsers,
     createUser,
+    loginUser,
     getUserById,
     updateUser,
     deleteUser,

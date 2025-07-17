@@ -22,6 +22,18 @@ const createUser = async (req: Request, res: Response) => {
     }
 };
 
+//Login user
+const loginUser = async (req: Request, res: Response) => {
+    const data = req.body;
+
+    try {
+        const { token, user } = await userService.loginUser(data);
+        res.status(200).json({ token, user });
+    } catch (error) {
+        res.status(401).json({ error: 'Failed to login' });
+    }
+};
+
 // Get User by ID
 const getUserById = async (req: Request, res: Response) => {
     try {
@@ -62,6 +74,7 @@ const deleteUser = async (req: Request, res: Response) => {
 module.exports = {
     getAllUsers,
     createUser,
+    loginUser,
     getUserById,
     updateUser,
     deleteUser,
