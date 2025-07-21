@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-const userService = require('../services/userServices');
+import userService from '../services/userServices';
 
 // Get all users
 const getAllUsers = async (req: Request, res: Response) => {
@@ -49,12 +49,27 @@ const getUserById = async (req: Request, res: Response) => {
     }
 };
 
+// Get User by Username
+const getUserByUsername = async (req: Request, res: Response) => {
+    try {
+        const username = req.params.username;
+        const user = await userService.getUserByUsername(username);
+        if (user) {
+            res.status(200).json(user);
+        } else {
+            res.status(404).json({ error: 'User not found' });
+        }
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch user' });
+    }
+};
+
 //Update User
 const updateUser = async (req: Request, res: Response) => {
     try {
         const id = parseInt(req.params.id);
         const updatedUser = await userService.updateUser(id, req.body);
-        res.json(updateUser);
+        res.json(updatedUser);
     } catch (error) {
         res.status(400).json({ error: 'Failed to update user' });
     }
@@ -70,9 +85,9 @@ const deleteUser = async (req: Request, res: Response) => {
         res.status(400).json({ error: 'Failed to delete user' });
     }
 };
-
-module.exports = {
+export default {
     getAllUsers,
+    getUserByUsername,
     createUser,
     loginUser,
     getUserById,

@@ -48,6 +48,11 @@ const getUserById = async (id: number) => {
     return await prisma.user.findUnique({ where: { id: id } });
 };
 
+// Get a user by Username
+const getUserByUsername = async (username: string) => {
+    return await prisma.user.findUnique({ where: { username: username } });
+};
+
 // Update a user
 const updateUser = async (id: number, data: Prisma.UserCreateInput) => {
     return await prisma.user.update({ where: { id: id }, data });
@@ -57,9 +62,9 @@ const updateUser = async (id: number, data: Prisma.UserCreateInput) => {
 const deleteUser = async (id: number) => {
     return await prisma.user.delete({ where: { id: id } });
 };
-
-module.exports = {
+export default {
     getAllUsers,
+    getUserByUsername,
     createUser,
     loginUser,
     getUserById,
