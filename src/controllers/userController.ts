@@ -34,6 +34,15 @@ const loginUser = async (req: Request, res: Response) => {
     }
 };
 
+//Get Logged User
+const getMe = async (req: Request, res: Response) => {
+    const user = req.user;
+    return res.status(200).json({
+        success: true,
+        data: user,
+    });
+};
+
 // Get User by ID
 const getUserById = async (req: Request, res: Response) => {
     try {
@@ -66,12 +75,24 @@ const getUserByUsername = async (req: Request, res: Response) => {
 
 //Update User
 const updateUser = async (req: Request, res: Response) => {
+    const tokenId = req.userId;
+    const paramId = parseInt(req.params.id);
+    if (tokenId !== paramId) {
+        return res.status(403).json({
+            message: 'You are not allowed to edit this profile.',
+        });
+    }
+
     try {
-        const id = parseInt(req.params.id);
-        const updatedUser = await userService.updateUser(id, req.body);
-        res.json(updatedUser);
+        const updatedUser = await userService.updateUser(tokenId, req.body);
+        res.status(200).json({
+            message: 'Profile updated successfully',
+            user: updatedUser,
+        });
     } catch (error) {
-        res.status(400).json({ error: 'Failed to update user' });
+        res.status(400).json({
+            error: 'Failed to update profile',
+        });
     }
 };
 
@@ -90,6 +111,7 @@ export default {
     getUserByUsername,
     createUser,
     loginUser,
+    getMe,
     getUserById,
     updateUser,
     deleteUser,
