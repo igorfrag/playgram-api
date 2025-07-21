@@ -62,6 +62,63 @@ const updateUser = async (id: number, data: Prisma.UserCreateInput) => {
 const deleteUser = async (id: number) => {
     return await prisma.user.delete({ where: { id: id } });
 };
+
+// Follow/Unfollow user
+const toggleFollowUser = async (followerId: number, followingId: number) => {
+    if (followerId === followingId) {
+        throw new Error("You can't follow yourself");
+    }
+    const existingFollow = await prisma.follow.findUnique({
+        where: {
+            followerId_followingId: {
+                followerId,
+                followingId,
+            },
+        },
+    });
+
+    if (existingFollow) {
+        // Unfollow
+        await prisma.follow.delete({
+            where: {
+                id: existingFollow.id,
+            },
+        });
+        await prisma.user.update({
+            where: { id: followerId },
+            data: { followingCount: { decrement: 1 } },
+        });
+        const updated = await prisma.user.update({
+            where: { id: followingId },
+            data: { followerCount: { decrement: 1 } },
+        });
+        return {
+            isFollowing: false,
+            followersCount: updated.followerCount,
+        };
+    } else {
+        // Follow
+        await prisma.follow.create({
+            data: {
+                followerId,
+                followingId,
+            },
+        });
+        await prisma.user.update({
+            where: { id: followerId },
+            data: { followingCount: { increment: 1 } },
+        });
+        const updated = await prisma.user.update({
+            where: { id: followingId },
+            data: { followerCount: { increment: 1 } },
+        });
+        return {
+            isFollowing: true,
+            followersCount: updated.followerCount,
+        };
+    }
+};
+
 export default {
     getAllUsers,
     getUserByUsername,
@@ -70,4 +127,5 @@ export default {
     getUserById,
     updateUser,
     deleteUser,
+    toggleFollowUser,
 };

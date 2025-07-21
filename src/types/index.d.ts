@@ -4,7 +4,7 @@ declare global {
     namespace Express {
         interface Request {
             user?: Partial<User>;
-            userId?: number;
+            userId: number;
         }
     }
 }

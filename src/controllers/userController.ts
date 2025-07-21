@@ -106,6 +106,34 @@ const deleteUser = async (req: Request, res: Response) => {
         res.status(400).json({ error: 'Failed to delete user' });
     }
 };
+
+const toggleFollowUser = async (req: Request, res: Response) => {
+    const followerId = req.userId;
+    const followingId = parseInt(req.params.id);
+
+    try {
+        const result = await userService.toggleFollowUser(
+            followerId,
+            followingId
+        );
+        res.status(200).json({
+            success: true,
+            message: result.isFollowing
+                ? 'User followed successfully'
+                : 'User unfollowed successfully',
+            data: {
+                is_following: result.isFollowing,
+                followers_count: result.followersCount,
+            },
+        });
+    } catch (error) {
+        res.status(400).json({
+            success: false,
+            message: 'Error following user',
+        });
+    }
+};
+
 export default {
     getAllUsers,
     getUserByUsername,
@@ -115,4 +143,5 @@ export default {
     getUserById,
     updateUser,
     deleteUser,
+    toggleFollowUser,
 };
