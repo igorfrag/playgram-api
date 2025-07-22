@@ -119,6 +119,14 @@ const toggleFollowUser = async (followerId: number, followingId: number) => {
     }
 };
 
+// Get Followers/Following
+const getUserFollowCount = async (id: number) => {
+    return await prisma.user.findUnique({
+        where: { id: id },
+        select: { followerCount: true, followingCount: true },
+    });
+};
+
 export default {
     getAllUsers,
     getUserByUsername,
@@ -128,4 +136,5 @@ export default {
     updateUser,
     deleteUser,
     toggleFollowUser,
+    getUserFollowCount,
 };

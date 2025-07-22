@@ -13,5 +13,6 @@ router.get('/:username', userController.getUserByUsername);
 router.put('/:id', authenticateToken, userController.updateUser);
 router.delete('/:id', userController.deleteUser);
 router.post('/:id/follow', authenticateToken, userController.toggleFollowUser);
+router.get('/:id/follows', userController.getUserFollowCount);
 
 module.exports = router;

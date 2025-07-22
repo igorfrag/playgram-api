@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Request, response, Response } from 'express';
 import userService from '../services/userServices';
 
 // Get all users
@@ -134,6 +134,23 @@ const toggleFollowUser = async (req: Request, res: Response) => {
     }
 };
 
+const getUserFollowCount = async (req: Request, res: Response) => {
+    try {
+        const id = parseInt(req.params.id);
+        const followCount = await userService.getUserFollowCount(id);
+        if (followCount) {
+            res.status(200).json({
+                success: true,
+                data: followCount,
+            });
+        } else {
+            res.status(404).json({ error: 'User not found' });
+        }
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch follow count' });
+    }
+};
+
 export default {
     getAllUsers,
     getUserByUsername,
@@ -144,4 +161,5 @@ export default {
     updateUser,
     deleteUser,
     toggleFollowUser,
+    getUserFollowCount,
 };
