@@ -3,3 +3,4 @@ node_modules
 /generated/prisma
 /prisma/dev.db
 script.ts
+uploads
