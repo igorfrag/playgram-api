@@ -1,8 +1,13 @@
 import multer from 'multer';
 import path from 'path';
+import { getUploadPath } from '../utils/getUploadPath';
+
+const { basePath } = getUploadPath();
 
 const storage = multer.diskStorage({
-    destination: 'uploads/',
+    destination: (req, file, cb) => {
+        cb(null, basePath);
+    },
     filename: (req, file, cb) => {
         const ext = path.extname(file.originalname);
         const uniqueName = `${

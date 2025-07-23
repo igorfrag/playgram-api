@@ -3,8 +3,21 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 async function main() {
-    const user = await prisma.user.findMany();
-    console.log(user);
+    const targetUser = await prisma.user.findUnique({
+        where: {
+            id: 1,
+        },
+        select: {
+            isPrivate: true,
+            followers: {
+                where: { followerId: 3 },
+                select: {
+                    id: true,
+                },
+            },
+        },
+    });
+    console.log(targetUser);
 }
 
 main()

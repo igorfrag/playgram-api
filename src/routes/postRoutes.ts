@@ -13,5 +13,6 @@ router.post(
 );
 router.get('/', authenticateToken, postController.getUserFeed);
 router.get('/:id', authenticateToken, postController.getPostById);
+router.delete('/:id', authenticateToken, postController.deletePostById);
 
 module.exports = router;

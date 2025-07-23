@@ -1,14 +1,16 @@
 import express, { Request, Response } from 'express';
 import cors from 'cors';
+import { getUploadPath } from './utils/getUploadPath';
+
 require('dotenv').config();
 const app = express();
+const { basePath, baseUrl } = getUploadPath();
 
 app.use(express.json());
 app.use(cors());
 const port = process.env.PORT;
-const UPLOAD_BASE_PATH = process.env.UPLOAD_BASE_PATH || '/uploads';
 
-app.use(`${UPLOAD_BASE_PATH}`, express.static('uploads'));
+app.use(baseUrl, express.static(basePath));
 
 const userRoutes = require('./routes/userRoutes');
 const postRoutes = require('./routes/postRoutes');

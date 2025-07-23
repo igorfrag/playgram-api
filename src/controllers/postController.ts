@@ -75,8 +75,37 @@ const getUserFeed = async (req: Request, res: Response) => {
     }
 };
 
+const deletePostById = async (req: Request, res: Response) => {
+    try {
+        const postId = parseInt(req.params.id);
+        const userId = req.userId;
+
+        await postService.deletePostById(postId, userId);
+        return res.status(200).json({
+            success: true,
+            message: 'Postagem deletada com sucesso',
+        });
+    } catch (error: any) {
+        const message = error.message;
+
+        if (message === 'Post not found') {
+            return res.status(404).json({ success: false, error: message });
+        }
+
+        if (message === 'You have no permission to delete this post') {
+            return res.status(403).json({ success: false, error: message });
+        }
+
+        return res.status(500).json({
+            success: false,
+            error: 'Error deleting post',
+        });
+    }
+};
+
 export default {
     createNewPost,
     getUserFeed,
     getPostById,
+    deletePostById,
 };

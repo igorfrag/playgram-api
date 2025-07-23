@@ -1,5 +1,6 @@
 import { Request, response, Response } from 'express';
 import userService from '../services/userServices';
+import postServices from '../services/postServices';
 
 // Get all users
 const getAllUsers = async (req: Request, res: Response) => {
@@ -151,6 +152,49 @@ const getUserFollowCount = async (req: Request, res: Response) => {
     }
 };
 
+const getUserPosts = async (req: Request, res: Response) => {
+    try {
+        const userId = req.userId;
+        const targetUserId = parseInt(req.params.id);
+        const page = parseInt(req.query.page as string) || 1;
+        const limit = parseInt(req.query.limit as string) || 20;
+
+        const data = await postServices.getUserPosts({
+            userId,
+            targetUserId,
+            page,
+            limit,
+        });
+
+        if (!data) {
+            return res.status(404).json({
+                success: false,
+                error: 'Usuário não encontrado',
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            data,
+        });
+    } catch (error: any) {
+        const message = error.message;
+
+        if (message === 'User not found') {
+            return res.status(404).json({ success: false, error: message });
+        }
+
+        if (message === 'This profile is private') {
+            return res.status(403).json({ success: false, error: message });
+        }
+
+        return res.status(500).json({
+            success: false,
+            error: 'Error fetching user posts',
+        });
+    }
+};
+
 export default {
     getAllUsers,
     getUserByUsername,
@@ -162,4 +206,5 @@ export default {
     deleteUser,
     toggleFollowUser,
     getUserFollowCount,
+    getUserPosts,
 };
