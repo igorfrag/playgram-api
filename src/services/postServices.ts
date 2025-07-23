@@ -73,12 +73,37 @@ const getPostById = async (postId: number, userId?: number) => {
 // Get User Feed
 const getUserFeed = async ({ userId, page, limit }: GetPostFeed) => {
     const skip = (page - 1) * limit;
+    // Query IDs userID follows.
+    const followingUsers = await prisma.follow.findMany({
+        where: { followerId: userId },
+        select: { followingId: true },
+    });
+    const followingIds = followingUsers.map((f: any) => f.followingId);
+    if (followingIds.length === 0) {
+        return {
+            posts: [],
+            pagination: {
+                page,
+                limit,
+                total: 0,
+                total_pages: 0,
+            },
+        };
+    }
+
     const [total, posts] = await Promise.all([
-        prisma.post.count(),
+        prisma.post.count({
+            where: {
+                userId: { in: followingIds },
+            },
+        }),
         prisma.post.findMany({
             skip,
             take: limit,
             orderBy: { createdAt: 'desc' },
+            where: {
+                userId: { in: followingIds },
+            },
             include: {
                 user: {
                     select: {

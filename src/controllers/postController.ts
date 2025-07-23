@@ -58,18 +58,14 @@ const getPostById = async (req: Request, res: Response) => {
 const getUserFeed = async (req: Request, res: Response) => {
     try {
         const userId = req.userId;
-        const page = parseInt(req.query.page as string);
-        const limit = parseInt(req.query.limit as string);
-        const { posts, pagination } = await postService.getUserFeed({
-            userId,
-            page,
-            limit,
-        });
+        const page = parseInt(req.query.page as string) || 1;
+        const limit = parseInt(req.query.limit as string) || 20;
+
+        const data = await postService.getUserFeed({ userId, page, limit });
 
         return res.status(200).json({
             success: true,
-            data: { posts },
-            pagination,
+            data,
         });
     } catch (error) {
         return res.status(500).json({
