@@ -243,6 +243,56 @@ const deletePostById = async (postId: number, userId: number) => {
     await prisma.post.delete({
         where: { id: postId },
     });
+
+    await prisma.user.update({
+        where: { id: userId },
+        data: {
+            postsCount: {
+                decrement: 1,
+            },
+        },
+    });
+};
+
+const toggleLikePost = async (postId: number, userId: number) => {
+    const existingLike = await prisma.like.findUnique({
+        where: {
+            userId_postId: {
+                userId,
+                postId,
+            },
+        },
+    });
+
+    if (existingLike) {
+        await prisma.like.delete({
+            where: {
+                id: existingLike.id,
+            },
+        });
+        await prisma.post.update({
+            where: { id: postId },
+            data: {
+                likesCount: {
+                    decrement: 1,
+                },
+            },
+        });
+        return { liked: false };
+    } else {
+        await prisma.like.create({
+            data: { userId, postId },
+        });
+        await prisma.post.update({
+            where: { id: postId },
+            data: {
+                likesCount: {
+                    increment: 1,
+                },
+            },
+        });
+        return { liked: true };
+    }
 };
 
 export default {
@@ -251,4 +301,5 @@ export default {
     getPostById,
     getUserPosts,
     deletePostById,
+    toggleLikePost,
 };

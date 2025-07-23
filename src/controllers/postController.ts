@@ -103,9 +103,28 @@ const deletePostById = async (req: Request, res: Response) => {
     }
 };
 
+const toggleLikePost = async (req: Request, res: Response) => {
+    try {
+        const userId = req.userId;
+        const postId = parseInt(req.params.id);
+
+        const result = await postService.toggleLikePost(postId, userId);
+        return res.status(200).json({
+            success: true,
+            message: result.liked ? 'Post liked' : 'Post unliked',
+        });
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            error: 'Error toggling like',
+        });
+    }
+};
+
 export default {
     createNewPost,
     getUserFeed,
     getPostById,
     deletePostById,
+    toggleLikePost,
 };
