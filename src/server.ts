@@ -14,9 +14,11 @@ app.use(baseUrl, express.static(basePath));
 
 const userRoutes = require('./routes/userRoutes');
 const postRoutes = require('./routes/postRoutes');
+const commentRoutes = require('./routes/commentRoutes');
 
 app.use('/users', userRoutes);
 app.use('/posts', postRoutes);
+app.use('/comments', commentRoutes);
 
 app.get('/', (req: Request, res: Response) => {
     res.send('Hello from TypeScript Express!');
