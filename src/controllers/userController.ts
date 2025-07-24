@@ -1,4 +1,5 @@
-import { Request, response, Response } from 'express';
+import { Request, Response } from 'express';
+import { serialize } from 'cookie';
 import userService from '../services/userServices';
 import postServices from '../services/postServices';
 
@@ -29,7 +30,15 @@ const loginUser = async (req: Request, res: Response) => {
 
     try {
         const { token, user } = await userService.loginUser(data);
-        res.status(200).json({ token, user });
+        const cookie = serialize('token', token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax',
+            maxAge: 60 * 60 * 24 * 7, // 7 days
+            path: '/',
+        });
+        res.setHeader('Set-Cookie', cookie);
+        res.status(200).json({ user });
     } catch (error) {
         res.status(401).json({ error: 'Failed to login' });
     }
