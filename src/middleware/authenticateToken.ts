@@ -8,10 +8,16 @@ const authenticateToken = async (
     next: NextFunction
 ) => {
     const authHeader = req.headers.authorization;
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    const tokenFromHeader = authHeader?.startsWith('Bearer ')
+        ? authHeader.split(' ')[1]
+        : null;
+    const tokenFromCookie = req.cookies?.token;
+
+    const token = tokenFromHeader || tokenFromCookie;
+
+    if (!token) {
         return res.status(401).json({ message: 'Token not provided' });
     }
-    const token = authHeader.split(' ')[1];
 
     try {
         const decoded = verifyToken(token) as { id: number };

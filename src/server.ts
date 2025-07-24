@@ -1,4 +1,5 @@
 import express, { Request, Response } from 'express';
+import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import { getUploadPath } from './utils/getUploadPath';
 
@@ -6,6 +7,7 @@ require('dotenv').config();
 const app = express();
 const { basePath, baseUrl } = getUploadPath();
 
+app.use(cookieParser());
 app.use(express.json());
 app.use(
     cors({
