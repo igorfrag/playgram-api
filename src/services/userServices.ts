@@ -44,8 +44,25 @@ const loginUser = async (data: LoginUserInput) => {
 };
 
 // Get a user by ID
-const getUserById = async (id: number) => {
-    return await prisma.user.findUnique({ where: { id: id } });
+const getUserById = async (id: number, currentUserId?: number) => {
+    const user = await prisma.user.findUnique({ where: { id: id } });
+    if (!user) return null;
+    let isFollowing = false;
+    if (currentUserId && currentUserId !== id) {
+        const follow = await prisma.follow.findUnique({
+            where: {
+                followerId_followingId: {
+                    followerId: currentUserId,
+                    followingId: id,
+                },
+            },
+        });
+        isFollowing = !!follow;
+    }
+    return {
+        ...user,
+        isFollowing,
+    };
 };
 
 // Get a user by Username

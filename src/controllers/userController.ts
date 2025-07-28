@@ -57,7 +57,9 @@ const getMe = async (req: Request, res: Response) => {
 const getUserById = async (req: Request, res: Response) => {
     try {
         const id = parseInt(req.params.id);
-        const user = await userService.getUserById(id);
+        const currentUserId = req.user?.id;
+
+        const user = await userService.getUserById(id, currentUserId);
         if (user) {
             res.status(200).json(user);
         } else {
