@@ -6,9 +6,13 @@ const getCommentsByPostId = async (req: Request, res: Response) => {
     try {
         const postId = parseInt(req.params.id);
         const userId = req.userId;
+        const skip = parseInt(req.query.skip as string) || 0;
+        const take = parseInt(req.query.take as string) || 10;
         const comments = await commentServices.getCommentsByPostId(
             postId,
-            userId
+            userId,
+            skip,
+            take
         );
         return res.status(200).json({
             success: true,

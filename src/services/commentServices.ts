@@ -2,7 +2,12 @@ import prisma from '../prisma/prismaClient';
 import { Prisma } from '@prisma/client';
 
 //Get all comments on a post by post ID
-const getCommentsByPostId = async (postId: number, userId: number) => {
+const getCommentsByPostId = async (
+    postId: number,
+    userId: number,
+    skip: number,
+    take: number
+) => {
     const comments = await prisma.comment.findMany({
         where: { postId },
         include: {
@@ -20,9 +25,9 @@ const getCommentsByPostId = async (postId: number, userId: number) => {
                 },
             },
         },
-        orderBy: {
-            createdAt: 'desc',
-        },
+        orderBy: [{ likesCount: 'desc' }, { createdAt: 'desc' }],
+        skip,
+        take,
     });
 
     const commentsWithIsLiked = comments.map((comment: any) => ({
