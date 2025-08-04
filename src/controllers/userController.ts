@@ -46,7 +46,7 @@ const loginUser = async (req: Request, res: Response) => {
 
 //Get Logged User
 const getMe = async (req: Request, res: Response) => {
-    if (req.user && 'passwordHash' in req.user) {
+    if (req.user) {
         const { passwordHash, ...rest } = req.user;
         return res.status(200).json({
             success: true,
