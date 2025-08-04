@@ -32,6 +32,7 @@ npm run dev
 
 ## 🔐 Variáveis de Ambiente .env
 
+```
 DATABASE_URL="file:./dev.db"
 JWT_SECRET=jwtsecret
 JWT_EXPIRES_IN="7d"
@@ -39,6 +40,7 @@ PORT="3000"
 UPLOAD_BASE_PATH="uploads"
 UPLOAD_BASE_URL="/uploads"
 FRONTEND_URL=url
+```
 
 ## 🔐 Autenticação
 
