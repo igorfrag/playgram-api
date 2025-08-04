@@ -6,7 +6,7 @@ import bcrypt from 'bcrypt';
 
 // Get all users
 const getAllUsers = async () => {
-    return await prisma.user.findMany();
+    return await prisma.user.findMany({ omit: { passwordHash: true } });
 };
 
 // Create a new user
@@ -18,6 +18,7 @@ const createUser = async (data: CreateUserInput) => {
             ...rest,
             passwordHash,
         },
+        omit: { passwordHash: true },
     });
 };
 
@@ -45,7 +46,10 @@ const loginUser = async (data: LoginUserInput) => {
 
 // Get a user by ID
 const getUserById = async (id: number, currentUserId?: number) => {
-    const user = await prisma.user.findUnique({ where: { id: id } });
+    const user = await prisma.user.findUnique({
+        where: { id: id },
+        omit: { passwordHash: true },
+    });
     if (!user) return null;
     let isFollowing = false;
     if (currentUserId && currentUserId !== id) {
@@ -67,12 +71,19 @@ const getUserById = async (id: number, currentUserId?: number) => {
 
 // Get a user by Username
 const getUserByUsername = async (username: string) => {
-    return await prisma.user.findUnique({ where: { username: username } });
+    return await prisma.user.findUnique({
+        where: { username: username },
+        omit: { passwordHash: true },
+    });
 };
 
 // Update a user
 const updateUser = async (id: number, data: Prisma.UserCreateInput) => {
-    return await prisma.user.update({ where: { id: id }, data });
+    return await prisma.user.update({
+        where: { id: id },
+        omit: { passwordHash: true },
+        data,
+    });
 };
 
 // Delete a user

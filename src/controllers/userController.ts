@@ -46,11 +46,18 @@ const loginUser = async (req: Request, res: Response) => {
 
 //Get Logged User
 const getMe = async (req: Request, res: Response) => {
-    const user = req.user;
-    return res.status(200).json({
-        success: true,
-        data: user,
-    });
+    if (req.user && 'passwordHash' in req.user) {
+        const { passwordHash, ...rest } = req.user;
+        return res.status(200).json({
+            success: true,
+            data: rest,
+        });
+    } else {
+        return res.status(400).json({
+            success: false,
+            error: 'User information is missing',
+        });
+    }
 };
 
 // Get User by ID

@@ -7,13 +7,7 @@ const authenticateToken = async (
     res: Response,
     next: NextFunction
 ) => {
-    const authHeader = req.headers.authorization;
-    const tokenFromHeader = authHeader?.startsWith('Bearer ')
-        ? authHeader.split(' ')[1]
-        : null;
-    const tokenFromCookie = req.cookies?.token;
-
-    const token = tokenFromHeader || tokenFromCookie;
+    const token = req.cookies?.token;
 
     if (!token) {
         return res.status(401).json({ message: 'Token not provided' });

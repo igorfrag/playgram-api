@@ -31,7 +31,7 @@ components:
                     description: Unique email address of the user.
                 passwordHash:
                     type: string
-                    description: Hashed password of the user.
+                    description: Hashed password of the user (Not exposed).
                 fullName:
                     type: string
                     description: Full name of the user.
