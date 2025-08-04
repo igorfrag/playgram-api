@@ -1,4 +1,7 @@
 import express, { Request, Response } from 'express';
+import swaggerUi from 'swagger-ui-express';
+import YAML from 'yamljs';
+import path from 'path';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import { getUploadPath } from './utils/getUploadPath';
@@ -6,6 +9,8 @@ import { getUploadPath } from './utils/getUploadPath';
 require('dotenv').config();
 const app = express();
 const { basePath, baseUrl } = getUploadPath();
+const swaggerDocument = YAML.load(path.join(__dirname, '../swagger.yaml'));
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.use(cookieParser());
 app.use(express.json());
