@@ -7,6 +7,7 @@ import authenticateToken from '../middleware/authenticateToken';
 router.get('/', userController.getAllUsers);
 router.post('/register', userController.createUser);
 router.post('/login', userController.loginUser);
+router.post('/logout', userController.logoutUser);
 router.get('/me', authenticateToken, userController.getMe);
 router.get('/id/:id', authenticateToken, userController.getUserById);
 router.get('/:username', userController.getUserByUsername);

@@ -44,6 +44,23 @@ const loginUser = async (req: Request, res: Response) => {
     }
 };
 
+//Logout user
+const logoutUser = async (req: Request, res: Response) => {
+    try {
+        const cookie = serialize('token', '', {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax',
+            path: '/',
+            expires: new Date(0),
+        });
+        res.setHeader('Set-Cookie', cookie);
+        res.status(200).json({ message: 'Logout Sucessfull' });
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to logout' });
+    }
+};
+
 //Get Logged User
 const getMe = async (req: Request, res: Response) => {
     if (req.user) {
@@ -218,6 +235,7 @@ export default {
     getUserByUsername,
     createUser,
     loginUser,
+    logoutUser,
     getMe,
     getUserById,
     updateUser,

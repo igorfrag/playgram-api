@@ -287,6 +287,24 @@ paths:
                                         $ref: '#/components/schemas/User'
                 401:
                     description: Failed to login (Unauthorized).
+    /users/logout:
+        post:
+            summary: Logout a user
+            tags:
+                - Users
+            requestBody:
+                required: false
+            responses:
+                200:
+                    description: User logged out successfully.
+                    headers:
+                        Set-Cookie:
+                            schema:
+                                type: string
+                                example: token=" "; Path=/; HttpOnly; SameSite=Lax; Expires=0; Secure
+
+                500:
+                    description: Failed to logout (Internal Server Error).
     /users/me:
         get:
             summary: Get the logged-in user's profile
